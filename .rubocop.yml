@@ -1,0 +1,49 @@
+Metrics/LineLength:
+  # 80 just isn't enough
+  Max: 120
+
+Style/HashSyntax:
+  # Enforce `{ :key => :value }` over `{ key: :value }`
+  EnforcedStyle: hash_rockets
+
+Style/IfUnlessModifier:
+  # Allow single-line body if statements
+  #   if condition
+  #     do_something
+  #   end
+  Enabled: false
+
+Style/LineEndConcatenation:
+  # Allow concatenation with `+` and `<<`
+  # This was built to micro-optimize string concatenation by using `\`
+  #   since `+` and `<<` have a method call https://github.com/bbatsov/rubocop/issues/759
+  #   However, any decent compiler *should* optimize the concatenation away
+  Enabled: False
+
+Style/MethodCallParentheses:
+  # Allow usage of parens for argument-less invocations
+  #   App.new()
+  Enabled: false
+
+Style/RedundantReturn:
+  # Allow to explicitly state that a function should return
+  # e.g. `return 1` instead of `1`
+  Enabled: false
+
+Style/SpaceAroundEqualsInParameterDefault:
+  # Disable spaces around equal sign in default parameters
+  # e.g. `func(param=nil)` instead of `func(param = nil)`
+  EnforcedStyle: no_space
+
+Style/StringLiterals:
+  # Always use double quotes as we find it tedious to jump back/forth when adding/removing interpolation
+  EnforcedStyle: double_quotes
+
+Style/TrailingComma:
+  # Force trailing comma for multiline array definitions
+  EnforcedStyleForMultiline: comma
+
+Style/WordArray:
+  # Prefer normal string array `["string"]` over word arrays `%w(string)`
+  # DEV: This is to make Ruby more approachable for non-Ruby users
+  Enabled: false
