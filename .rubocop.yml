@@ -2,6 +2,10 @@ Metrics/LineLength:
   # 80 just isn't enough
   Max: 120
 
+Metrics/MethodLength:
+  # This gets noisy for scripts and we don't need it yet
+  Enabled: false
+
 Style/HashSyntax:
   # Enforce `{ :key => :value }` over `{ key: :value }`
   EnforcedStyle: hash_rockets
@@ -29,6 +33,11 @@ Style/RedundantReturn:
   # Allow to explicitly state that a function should return
   # e.g. `return 1` instead of `1`
   Enabled: false
+
+Style/RegexpLiteral:
+  # Always use %r{...} around regular expressions
+  # e.g. `%r{pattern}` instead of `/pattern/`
+  EnforcedStyle: percent_r
 
 Style/SpaceAroundEqualsInParameterDefault:
   # Disable spaces around equal sign in default parameters
