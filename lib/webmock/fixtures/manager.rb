@@ -46,6 +46,7 @@ module WebMock
       # @param pattern [Regexp|String] URI pattern to match for this mock
       # @param response [String|File|Lambda|Hash] the response, this is the same as what would be supplied
       #   to `WebMock::RequestStub#to_return` please see https://github.com/bblimke/webmock for examples
+      # @return [nil]
       def self.register_fixture(name, verb, pattern, response)
         @fixtures[name] = {
           :pattern => pattern,
@@ -57,6 +58,7 @@ module WebMock
       # Retrieve a hash of registered fixtures available to this Manager
       # @classmethod
       # @return [Hash] a hash mapping the registered name to a hash of properties
+      #
       #   e.g. `{ :get_example => { :pattern => %r{example.org}, :verb => :get, :response => "Hello World" } }`
       def self.fixtures
         return @fixtures
@@ -64,6 +66,7 @@ module WebMock
 
       # Reset this manager by removing all previously registered fixtures
       # @classmethod
+      # @return [nil]
       def self.reset!
         @fixtures = {}
       end
