@@ -1,10 +1,13 @@
 WebMock fixtures
 ================
+[![Gem Version](https://badge.fury.io/rb/webmock-fixtures.svg)](https://rubygems.org/gems/webmock-fixtures)
+[![Build Status](https://travis-ci.org/underdogio/webmock-fixtures.svg?branch=master)](https://travis-ci.org/underdogio/webmock-fixtures)
+
 Library for managing [WebMock][] fixtures.
 
 [WebMock]: https://github.com/bblimke/webmock
 
-[Documentation](http://www.rubydoc.info/github/underdogio/webmock-fixtures).
+[Documentation](http://www.rubydoc.info/gems/webmock-fixtures).
 
 ## Installation
 `gem install webmock-fixtures`
