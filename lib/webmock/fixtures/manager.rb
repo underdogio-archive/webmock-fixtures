@@ -46,8 +46,14 @@ module WebMock
       # @param pattern [Regexp|String] URI pattern to match for this mock
       # @param response [String|File|Lambda|Hash] the response, this is the same as what would be supplied
       #   to `WebMock::RequestStub#to_return` please see https://github.com/bblimke/webmock for examples
+      # @param &block [Proc] a block to use for handling the response.
       # @return [nil]
-      def self.register_fixture(name, verb, pattern, response)
+      def self.register_fixture(name, verb, pattern, response=nil, &block)
+        if block_given? and response == nil
+          response = block
+        elsif !block_given? and response == nil
+          fail(ArgumentError, "Expected either \"response\" parameter or a block, received neither")
+        end
         @fixtures[name] = {
           :pattern => pattern,
           :verb => verb,
@@ -77,10 +83,23 @@ module WebMock
       # @param verb [Symbol] symbol method to mock (e.g. `:get`, `:post`)
       # @param pattern [Regexp|String] URI pattern to match for this mock
       # @param file_name [String] the name of the file to load the fixture response from
+      # @return [nil]
       def self.register_fixture_file(name, verb, pattern, file_name)
         # Read the contents from the file and use as the response
         # https://github.com/bblimke/webmock/tree/v1.22.1#replaying-raw-responses-recorded-with-curl--is
         register_fixture(name, verb, pattern, File.new(file_name).read)
+      end
+
+      # Register an instance method as a fixture handler
+      # @classmethod
+      # @param name [Symbol] the name of the instance method, this is also the name the fixture will be registered as
+      # @param verb [Symbol] symbol method to mock (e.g. `:get`, `:post`)
+      # @param pattern [Regexp|String] URI pattern to match for this mock
+      # @return [nil]
+      def self.register_fixture_method(name, verb, pattern)
+        # DEV: `method` will be an `UnboundMethod` which we can bind later when starting
+        method = self.instance_method(name)
+        register_fixture(name, verb, pattern, method)
       end
 
       # Start the named preloaded web fixtures
@@ -92,14 +111,24 @@ module WebMock
         # Create a new instance to store started mocks on
         manager = new()
         fixture_names.each do |fixture_name|
-          # DEV: `fetch` will fail if the key does not exist
+          # Ensure the named fixture exists
           unless @fixtures.key?(fixture_name)
             fail(KeyError, "The fixture \"#{fixture_name}\" was not found. Please make sure to " +
                            "register it with ::register_fixture or ::register_fixture_file")
           end
+          fixture_options = @fixtures[fixture_name]
+
+          # Ensure `UnboundMethod`s are bound to our `Manager` instance
+          #   and any `Proc`s are called with our `Manager` instance as the last parameter
+          if fixture_options[:response].is_a?(UnboundMethod)
+            handler = fixture_options[:response].bind(manager)
+            fixture_options[:response] = lambda { |*args| handler.call(*args) }
+          elsif fixture_options[:response].is_a?(Proc)
+            block = fixture_options[:response]
+            fixture_options[:response] = lambda { |*args| block.call(*args, manager) }
+          end
 
           # Create the WebMock stub
-          fixture_options = @fixtures[fixture_name]
           stub = WebMock::API.stub_request(fixture_options[:verb], fixture_options[:pattern])
           stub.to_return(fixture_options[:response])
 
