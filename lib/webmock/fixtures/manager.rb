@@ -49,9 +49,9 @@ module WebMock
       # @param &block [Proc] a block to use for handling the response.
       # @return [nil]
       def self.register_fixture(name, verb, pattern, response=nil, &block)
-        if block_given? and response == nil
+        if block_given? && response.nil?
           response = block
-        elsif !block_given? and response == nil
+        elsif !block_given? && response.nil?
           fail(ArgumentError, "Expected either \"response\" parameter or a block, received neither")
         end
         @fixtures[name] = {
@@ -98,7 +98,7 @@ module WebMock
       # @return [nil]
       def self.register_fixture_method(name, verb, pattern)
         # DEV: `method` will be an `UnboundMethod` which we can bind later when starting
-        method = self.instance_method(name)
+        method = instance_method(name)
         register_fixture(name, verb, pattern, method)
       end
 
